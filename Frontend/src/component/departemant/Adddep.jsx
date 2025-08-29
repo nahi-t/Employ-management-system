@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 function Adddep() {
   // State for form fields
   const [formData, setFormData] = useState({
-    depName: '',
+    name: '',
     description: ''
   });
 
@@ -20,7 +20,7 @@ function Adddep() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.depName || !formData.description) {
+    if (!formData.name || !formData.description) {
       setMessage('Please fill in all fields.');
       return;
     }
@@ -28,14 +28,16 @@ function Adddep() {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        'http://localhost:5000/api/dep_add',
+        'http://localhost:5000/api/add_dep',
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (res.data.success) {
-        setMessage('Department added successfully!');
-        setFormData({ depName: '', description: '' });
+        setMessage(
+          res.data.msg);
+        setFormData({ name: '', description: '' });
+        
       }
     } catch (error) {
       console.error(error);
@@ -57,21 +59,22 @@ function Adddep() {
         <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Department Name */}
           <div>
-            <label htmlFor="depName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
               Department Name
             </label>
             <input
               type="text"
-              id="depName"
-              name="depName"
+              id="name"
+              name="name"
               placeholder="Enter department name"
-              value={formData.depName}
+              value={formData.name}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 border-gray-300"
             />
           </div>
 
           {/* Description */}
+
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
               Description

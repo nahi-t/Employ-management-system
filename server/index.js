@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import dbconect from "./db/db.js";
 import rg from "./controler/usercontroler.js";
 import rout from "./Rout/authrout.js";
+import deprout from "./Rout/depRout.js";
 
 dotenv.config();
 
@@ -11,12 +12,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api", rout);
+app.use("/api", deprout);
 
 const PORT = process.env.PORT || 3000; // fallback port
 
 try {
   await dbconect();
-  await rg.reg(); 
+  await rg.reg();
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
