@@ -1,14 +1,14 @@
-import axios from 'axios';
-import React, { useState } from 'react';
+import axios from "axios";
+import React, { useState } from "react";
 
 function Adddep() {
   // State for form fields
   const [formData, setFormData] = useState({
-    name: '',
-    description: ''
+    name: "",
+    description: "",
   });
 
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   // Handle input changes
   const handleChange = (e) => {
@@ -21,28 +21,30 @@ function Adddep() {
     e.preventDefault();
 
     if (!formData.name || !formData.description) {
-      setMessage('Please fill in all fields.');
+      setMessage("Please fill in all fields.");
       return;
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const res = await axios.post(
-        'http://localhost:5000/api/add_dep',
+        "http://localhost:5000/api/add_dep",
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (res.data.success) {
-        setMessage(
-          res.data.msg);
-        setFormData({ name: '', description: '' });
-        
+        setMessage(res.data.msg);
+        setFormData({ name: "", description: "" });
       }
     } catch (error) {
       console.error(error);
-      if (error.response && error.response.data && !error.response.data.success) {
-        alert(error.response.data.message || 'Error adding department');
+      if (
+        error.response &&
+        error.response.data &&
+        !error.response.data.success
+      ) {
+        alert(error.response.data.message || "Error adding department");
       }
     }
   };
@@ -50,16 +52,23 @@ function Adddep() {
   return (
     <div className="flex items-center justify-center">
       <div className="w-96 max-w-3xl mx-auto bg-white rounded-md shadow-md p-8 mt-10">
-        <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">Add Department</h3>
+        <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          Add Department
+        </h3>
 
         {message && (
-          <div className="mb-4 text-center text-teal-600 font-medium">{message}</div>
+          <div className="mb-4 text-center text-teal-600 font-medium">
+            {message}
+          </div>
         )}
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Department Name */}
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Department Name
             </label>
             <input
@@ -76,7 +85,10 @@ function Adddep() {
           {/* Description */}
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Description
             </label>
             <textarea

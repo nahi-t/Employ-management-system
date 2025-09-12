@@ -8,8 +8,11 @@ import Department from "./component/departemant/Departmant";
 import Adminsummery from "./component/summarycard/Adminsummery.jsx";
 import Adddep from "./component/departemant/Adddep.jsx";
 import Edit from "./component/departemant/Edit.jsx";
-import Delet from "./component/departemant/Delet.jsx";
+import List from "./component/employe/List.jsx";
 import { Toaster } from "react-hot-toast";
+import Add from "./component/employe/Add.jsx";
+import Veiw from "./component/employe/Veiw.jsx";
+import EdIt from "./component/employe/EdIt.jsx";
 
 function App() {
   return (
@@ -40,21 +43,20 @@ function App() {
             path="/admin-dashboard/department/edit/:id"
             element={<Edit />}
           />
+          <Route path="/admin-dashboard/department/delet/:id" />
+          <Route path="employees" element={<List />} />
+          <Route path="/admin-dashboard/Adde" element={<Add />} />
           <Route
-            path="/admin-dashboard/department/delet/:id"
-            element={<Delet />}
+            path="/admin-dashboard/employees/View/:id"
+            element={<Veiw />}
+          />
+          <Route
+            path="/admin-dashboard/employees/Edit/:id"
+            element={<EdIt />}
           />
         </Route>
 
         {/* Employee Dashboard */}
-        <Route
-          path="/employee"
-          element={
-            <ProtectedRoute>
-              <Employedash />
-            </ProtectedRoute>
-          }
-        />
       </Routes>
     </>
   );

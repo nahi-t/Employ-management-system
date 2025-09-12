@@ -7,6 +7,7 @@ import axios from "axios";
 
 function Department() {
   const [dep, setDep] = useState([]);
+
   const [f, setf] = useState([]);
   const ondepdelet = async (id) => {
     setDep((prev) => prev.filter((item) => item.id !== id));
