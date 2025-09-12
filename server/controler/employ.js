@@ -162,6 +162,12 @@ const getemployeById = async (req, res) => {
 const updateEmployee = async (req, res) => {
   try {
     const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid employee ID" });
+    }
+
     const {
       name,
       email,
@@ -171,40 +177,52 @@ const updateEmployee = async (req, res) => {
       dateOfBirth,
       gender,
       maritalStatus,
-      department, // optional, if you want to update department
+      department,
     } = req.body;
 
-    // Find employee with user
     const employee = await Employee.findById(id).populate("userId");
     if (!employee) {
-      return res.status(404).json({ error: "Employee not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Employee not found" });
     }
 
-    // ✅ Update user fields
+    // Update user info
     if (name) employee.userId.name = name;
     if (email) employee.userId.email = email;
-
-    // ✅ Update profile image if uploaded
-    if (req.file) {
-      employee.userId.profileImage = `uploads/${req.file.filename}`;
-    }
+    if (req.file) employee.userId.profileImage = `uploads/${req.file.filename}`;
     await employee.userId.save();
 
-    // ✅ Update employee fields
+    // Update employee fields
     if (employeeId) employee.employeeId = employeeId;
     if (designation) employee.designation = designation;
     if (salary) employee.salary = salary;
     if (dateOfBirth) employee.dateOfBirth = dateOfBirth;
     if (gender) employee.gender = gender;
     if (maritalStatus) employee.maritalStatus = maritalStatus;
-    if (department) employee.department = department;
 
+    if (department) {
+      if (!mongoose.Types.ObjectId.isValid(department)) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid department ID" });
+      }
+      const depExists = await Department.findById(department);
+      if (!depExists) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Department not found" });
+      }
+      employee.department = department; // assign ObjectId directly
+    }
+
+    // Mongoose timestamps will auto-update `updatedAt`
     await employee.save();
 
     res.json({ success: true, employee });
-  } catch (err) {
-    console.error("Update employee error:", err);
-    res.status(500).json({ error: "Update failed" });
+  } catch (error) {
+    console.error("updateEmployee error:", error);
+    res.status(500).json({ success: false, message: "Update failed" });
   }
 };
 export { addem, upload, getemp, getemployeById, updateEmployee };

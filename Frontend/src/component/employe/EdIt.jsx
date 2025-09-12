@@ -9,11 +9,13 @@ function EdIt() {
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [departments, setDepartments] = useState([]);
 
   const baseURL =
     import.meta?.env?.VITE_API_BASE_URL?.replace(/\/$/, "") ||
     "http://localhost:5000";
 
+  // fetch single employee
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
@@ -32,14 +34,24 @@ function EdIt() {
     fetchEmployee();
   }, [id, baseURL]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setEmployee((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+  // fetch all departments
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(`${baseURL}/api/getdep`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.data.success) setDepartments(res.data.data);
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+        alert("Error fetching departments");
+      }
+    };
+    fetchDepartments();
+  }, [baseURL]);
 
+  // update nested user fields
   const handleUserChange = (e) => {
     const { name, value } = e.target;
     setEmployee((prev) => ({
@@ -48,8 +60,27 @@ function EdIt() {
     }));
   };
 
+  // update top-level employee fields
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEmployee((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // department select (store ObjectId, not name)
+  const handleDepartmentChange = (e) => {
+    const { value } = e.target;
+    setEmployee((prev) => ({
+      ...prev,
+      department: value,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
 
     const payload = {
       name: employee.userId.name,
@@ -60,15 +91,16 @@ function EdIt() {
       dateOfBirth: employee.dateOfBirth,
       gender: employee.gender,
       maritalStatus: employee.maritalStatus,
+      department: employee.department, // now sending ObjectId
     };
-    setSaving(true);
+
     try {
       const token = localStorage.getItem("token");
       await axios.put(`${baseURL}/api/emp/updateemploye/${id}`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      navigate(`/admin-dashboard/employees/Edit/${id}`);
-      alert("Updated employee");
+      alert("Employee updated");
+      navigate(`/employees/${id}`);
     } catch (err) {
       console.error("Error updating employee:", err);
       alert("Update failed");
@@ -87,16 +119,14 @@ function EdIt() {
 
   if (!employee) {
     return (
-      <div className="p-6">
-        <div className="max-w-2xl mx-auto text-center border border-gray-200 p-8 rounded-2xl bg-white shadow">
-          <p className="text-lg font-medium">Employee not found</p>
-          <Link
-            to="/employees"
-            className="inline-flex mt-6 px-4 py-2 rounded-xl bg-black text-white hover:bg-gray-800"
-          >
-            Go Back
-          </Link>
-        </div>
+      <div className="p-6 text-center">
+        <p className="text-lg font-medium">Employee not found</p>
+        <Link
+          to="/employees"
+          className="inline-flex mt-4 px-4 py-2 rounded-xl bg-black text-white hover:bg-gray-800"
+        >
+          Go Back
+        </Link>
       </div>
     );
   }
@@ -104,102 +134,115 @@ function EdIt() {
   return (
     <div className="p-6">
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-          Edit Employee
-        </h2>
+        <h2 className="text-3xl font-bold mb-6">Edit Employee</h2>
 
         <form
           onSubmit={handleSubmit}
-          className="mt-8 space-y-8 bg-white p-8 rounded-2xl shadow-lg border border-gray-100"
+          className="space-y-6 bg-white p-6 rounded-2xl shadow-lg"
         >
           {/* Profile image preview */}
-          <div className="flex items-center gap-6">
-            <img
-              src={`http://localhost:5000/${employee.userId.profileImage}`}
-              alt={employee?.userId?.name || "Employee"}
-              className="h-32 w-32 rounded-xl object-cover ring-2 ring-gray-200 shadow-sm"
-            />
-            <div>
-              <p className="font-medium text-gray-800">Profile Image</p>
-              <p className="text-gray-500 text-sm">
-                This can be updated in the upload section.
-              </p>
+          {employee.userId.profileImage && (
+            <div className="flex items-center gap-6">
+              <img
+                src={`${baseURL}/${employee.userId.profileImage}`}
+                alt={employee.userId.name}
+                className="h-32 w-32 rounded-xl object-cover ring-2 ring-gray-200"
+              />
             </div>
-          </div>
+          )}
 
-          {/* Basic info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputField
               label="Full Name"
               name="name"
-              value={employee?.userId?.name || ""}
+              value={employee.userId.name}
               onChange={handleUserChange}
             />
             <InputField
-              label="Email Address"
+              label="Email"
               name="email"
               type="email"
-              value={employee?.userId?.email || ""}
+              value={employee.userId.email}
               onChange={handleUserChange}
             />
             <InputField
               label="Employee ID"
               name="employeeId"
-              value={employee.employeeId || ""}
+              value={employee.employeeId}
               onChange={handleChange}
             />
             <InputField
               label="Designation"
               name="designation"
-              value={employee.designation || ""}
+              value={employee.designation}
               onChange={handleChange}
             />
             <InputField
               label="Salary"
               name="salary"
               type="number"
-              value={employee.salary || ""}
+              value={employee.salary}
               onChange={handleChange}
             />
             <InputField
               label="Date of Birth"
               name="dateOfBirth"
               type="date"
-              value={employee.dateOfBirth?.substring(0, 10) || ""}
+              value={employee.dateOfBirth?.substring(0, 10)}
               onChange={handleChange}
             />
-          </div>
 
-          {/* Select fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Department dropdown */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Department
+              </label>
+              <select
+                name="department"
+                value={
+                  typeof employee.department === "string"
+                    ? employee.department
+                    : employee.department?._id
+                }
+                onChange={handleDepartmentChange}
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+              >
+                <option value="">Select Department</option>
+                {departments.map((d) => (
+                  <option key={d._id} value={d._id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <SelectField
               label="Gender"
               name="gender"
-              value={employee.gender || ""}
+              value={employee.gender}
               onChange={handleChange}
               options={["Male", "Female", "Other"]}
             />
             <SelectField
               label="Marital Status"
               name="maritalStatus"
-              value={employee.maritalStatus || ""}
+              value={employee.maritalStatus}
               onChange={handleChange}
-              options={["Single", "Married", "Divorced", "Widowed"]}
+              options={["Single", "Married", "Divorced"]}
             />
           </div>
 
-          {/* Actions */}
           <div className="flex justify-end gap-4">
             <Link
               to={`/employees/${id}`}
-              className="px-5 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50 transition"
+              className="px-5 py-2 rounded-xl border border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2 rounded-xl bg-black text-white font-medium hover:bg-gray-800 disabled:opacity-50 transition"
+              className="px-6 py-2 rounded-xl bg-black text-white font-medium hover:bg-gray-800 disabled:opacity-50"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>
@@ -219,9 +262,9 @@ function InputField({ label, name, value, onChange, type = "text" }) {
       <input
         type={type}
         name={name}
-        value={value}
+        value={value || ""}
         onChange={onChange}
-        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
       />
     </div>
   );
@@ -235,9 +278,9 @@ function SelectField({ label, name, value, onChange, options }) {
       </label>
       <select
         name={name}
-        value={value}
+        value={value || ""}
         onChange={onChange}
-        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+        className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
       >
         <option value="">Select {label}</option>
         {options.map((opt) => (
