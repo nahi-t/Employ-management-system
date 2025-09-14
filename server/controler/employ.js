@@ -190,7 +190,7 @@ const updateEmployee = async (req, res) => {
     // Update user info
     if (name) employee.userId.name = name;
     if (email) employee.userId.email = email;
-    if (req.file) employee.userId.profileImage = `uploads/${req.file.filename}`;
+
     await employee.userId.save();
 
     // Update employee fields

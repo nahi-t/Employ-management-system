@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-
 function EdIt() {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -96,12 +94,16 @@ function EdIt() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.put(`${baseURL}/api/emp/updateemploye/${id}`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.put(
+        `http://localhost:5000/api/emp/updateemploye/${id}`,
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       alert("Employee updated");
-      navigate(`/employees/${id}`);
     } catch (err) {
+      console.log(err.response.data.messages);
       console.error("Error updating employee:", err);
       alert("Update failed");
     } finally {
