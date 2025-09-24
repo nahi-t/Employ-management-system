@@ -13,6 +13,8 @@ import { Toaster } from "react-hot-toast";
 import Add from "./component/employe/Add.jsx";
 import Veiw from "./component/employe/Veiw.jsx";
 import EdIt from "./component/employe/EdIt.jsx";
+import Salary from "./component/salary/Salary.jsx";
+import Viewsalary from "./component/salary/Viewsalary.jsx";
 
 function App() {
   return (
@@ -53,6 +55,11 @@ function App() {
           <Route
             path="/admin-dashboard/employees/Edit/:id"
             element={<EdIt />}
+          />
+          <Route path="/admin-dashboard/salary" element={<Salary />} />
+          <Route
+            path="/admin-dashboard/salary/view/:id"
+            element={<Viewsalary />}
           />
         </Route>
 

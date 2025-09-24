@@ -6,6 +6,7 @@ import rg from "./controler/usercontroler.js";
 import rout from "./Rout/authrout.js";
 import deprout from "./Rout/depRout.js";
 import emprout from "./Rout/emprout.js";
+import salary from "./Rout/salaryrout.js";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.static("public/uploades"));
 app.use("/api", rout);
 app.use("/api", deprout);
 app.use("/api/emp", emprout);
+app.use("/api/salary", salary);
 
 const PORT = process.env.PORT || 3000; // fallback port
 

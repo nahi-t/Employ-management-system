@@ -225,4 +225,37 @@ const updateEmployee = async (req, res) => {
     res.status(500).json({ success: false, message: "Update failed" });
   }
 };
-export { addem, upload, getemp, getemployeById, updateEmployee };
+const getemployeByDepartmentId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid employee ID" });
+    }
+
+    const employees = await Employee.find({ department: id })
+      .populate("userId", "name") // populate only the "name" field from User
+      .select("userId");
+    const names = employees.map((emp) => emp.userId.name);
+
+    if (!employees) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Employee not found" });
+    }
+
+    res.status(200).json({ success: true, names });
+  } catch (error) {
+    console.error("Error in getemployeById:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+export {
+  addem,
+  upload,
+  getemp,
+  getemployeById,
+  updateEmployee,
+  getemployeByDepartmentId,
+};

@@ -56,7 +56,10 @@ const Empbutton = ({ id }) => {
       >
         Edit
       </button>
-      <button className="px-4 py-1 bg-yellow-600 rounded text-white">
+      <button
+        className="px-4 py-1 bg-yellow-600 rounded text-white"
+        onClick={() => navigate(`/admin-dashboard/salary/view/${id}`)}
+      >
         Salary
       </button>
       <button className="px-4 py-1 bg-red-600 rounded text-white">Leave</button>

@@ -89,9 +89,12 @@ function EdIt() {
       dateOfBirth: employee.dateOfBirth,
       gender: employee.gender,
       maritalStatus: employee.maritalStatus,
-      department: employee.department, // now sending ObjectId
+      department:
+        typeof employee.department === "string"
+          ? employee.department
+          : employee.department?._id,
     };
-
+    console.log(payload);
     try {
       const token = localStorage.getItem("token");
       await axios.put(
@@ -102,8 +105,12 @@ function EdIt() {
         }
       );
       alert("Employee updated");
+
+      alert("Employee updated successfully");
+      navigate(`/admin-dashboard/employees/View/${id}`);
     } catch (err) {
       console.log(err.response.data.messages);
+
       console.error("Error updating employee:", err);
       alert("Update failed");
     } finally {

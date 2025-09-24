@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import {
-  FaBuilding, FaCalendar, FaCogs, FaMoneyBillWave,
-  FaTachometerAlt, FaUser, FaBars
-} from 'react-icons/fa';
+  FaBuilding,
+  FaCalendar,
+  FaCogs,
+  FaMoneyBillWave,
+  FaTachometerAlt,
+  FaUser,
+  FaBars,
+} from "react-icons/fa";
 
 function AdminSidebar() {
   const [isOpen, setIsOpen] = useState(true);
 
   const linkClasses = ({ isActive }) =>
     `flex items-center space-x-4 py-2.5 px-4 rounded hover:bg-teal-700 ${
-      isActive ? 'bg-teal-500 text-white' : ''
+      isActive ? "bg-teal-500 text-white" : ""
     }`;
 
   return (
@@ -26,7 +31,7 @@ function AdminSidebar() {
       {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 h-screen w-64 bg-gray-800 text-white transform
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
         transition-transform duration-300 ease-in-out z-40`}
       >
         <div className="bg-teal-600 h-12 flex items-center justify-center">
@@ -42,12 +47,13 @@ function AdminSidebar() {
           <NavLink to="/admin-dashboard/department" className={linkClasses}>
             <FaBuilding /> <span>Department</span>
           </NavLink>
-          <NavLink to="/admin-dashboard/leaves" className={linkClasses}>
-            <FaCalendar /> <span>Leaves</span>
-          </NavLink>
           <NavLink to="/admin-dashboard/salary" className={linkClasses}>
             <FaMoneyBillWave /> <span>Salary</span>
           </NavLink>
+          <NavLink to="/admin-dashboard/leaves" className={linkClasses}>
+            <FaCalendar /> <span>Leaves</span>
+          </NavLink>
+
           <NavLink to="/admin-dashboard/settings" className={linkClasses}>
             <FaCogs /> <span>Settings</span>
           </NavLink>
