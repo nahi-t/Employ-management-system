@@ -53,6 +53,9 @@ function AdminSidebar() {
           <NavLink to="/admin-dashboard/leaves" className={linkClasses}>
             <FaCalendar /> <span>Leaves</span>
           </NavLink>
+          <NavLink to="/admin-dashboard/attendance" className={linkClasses}>
+            <FaCalendar /> <span>Attendance</span>
+          </NavLink>
 
           <NavLink to="/admin-dashboard/settings" className={linkClasses}>
             <FaCogs /> <span>Settings</span>

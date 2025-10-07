@@ -54,7 +54,7 @@ function Department() {
   };
 
   return (
-    <div className="p-5">
+    <div className="p-5 ">
       <div className="text-center mb-4">
         <h3 className="text-2xl font-bold">Manage Department</h3>
       </div>
@@ -74,7 +74,7 @@ function Department() {
         </Link>
       </div>
 
-      <div>
+      <div className="bg-gradient-to-br from-white to-gray-400 ">
         <DataTable columns={columns} data={f} pagination highlightOnHover />
       </div>
     </div>

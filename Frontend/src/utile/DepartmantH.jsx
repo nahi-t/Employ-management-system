@@ -57,7 +57,7 @@ const Depbutton = ({ id, onDepDelete }) => {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 bg-gradient-to-br from-white to-gray-400 ">
       <button
         className="px-4 py-1 bg-teal-600 rounded text-white"
         onClick={() => navigate(`/admin-dashboard/department/edit/${id}`)}

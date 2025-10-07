@@ -2,7 +2,7 @@ import "./App.css";
 import { Route, Routes, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Admindash from "./pages/Admindash";
-import Employedash from "./pages/Employedash";
+import Employedash from "./pages/Employedash.jsx";
 import ProtectedRoute from "./utile/ProtectedRoute.jsx";
 import Department from "./component/departemant/Departmant";
 import Adminsummery from "./component/summarycard/Adminsummery.jsx";
@@ -15,6 +15,14 @@ import Veiw from "./component/employe/Veiw.jsx";
 import EdIt from "./component/employe/EdIt.jsx";
 import Salary from "./component/salary/Salary.jsx";
 import Viewsalary from "./component/salary/Viewsalary.jsx";
+import Summarycard from "./component/employedashbord/Summarycard.jsx";
+import Leaves from "./component/leaves/Leaves.jsx";
+import Addleaves from "./component/leaves/Addleaves.jsx";
+import Setting from "./component/employedashbord/Setting.jsx";
+import Leveslist from "./component/leaves/Leveslist.jsx";
+import Detail from "./component/leaves/Detail.jsx";
+import AttendanceForm from "./component/Attendance/Atendanceadd.jsx";
+import Addattendanceh from "./component/Attendance/Attendancehis.jsx";
 
 function App() {
   return (
@@ -23,6 +31,7 @@ function App() {
       <Routes>
         {/* Redirect root to admin dashboard */}
         <Route path="/" element={<Navigate to="/admin-dashboard" />} />
+        {/* <Route path="/" element={<Navigate to="/employee" />} /> */}
 
         {/* Public Login Route */}
         <Route path="/login" element={<Login />} />
@@ -61,9 +70,31 @@ function App() {
             path="/admin-dashboard/salary/view/:id"
             element={<Viewsalary />}
           />
+          <Route path="settings" element={<Setting />} />
+          <Route path="leaves" element={<Leveslist />} />
+          <Route path="leaves/:id" element={<Detail />} />
+          <Route path="attendance" element={<AttendanceForm />} />
+          <Route path="attendance-history" element={<Addattendanceh />} />
         </Route>
 
         {/* Employee Dashboard */}
+
+        <Route
+          path="/employee"
+          element={
+            <ProtectedRoute>
+              <Employedash />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<Navigate to="dashboard" />} />
+          <Route path="dashboard" element={<Summarycard />} />
+          <Route path="profile/:id" element={<Veiw />} />
+          <Route path="salary/:id" element={<Viewsalary />} />
+          <Route path="leaves" element={<Leaves />} />
+          <Route path="Addleaves" element={<Addleaves />} />
+          <Route path="setting" element={<Setting />} />
+        </Route>
       </Routes>
     </>
   );

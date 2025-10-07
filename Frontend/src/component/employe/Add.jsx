@@ -70,6 +70,7 @@ export default function AddEmployeeForm() {
           "Content-Type": "multipart/form-data",
         },
       });
+
       if (res.data.success) {
         nav("/admin-dashboard/employees");
       }
@@ -107,7 +108,7 @@ export default function AddEmployeeForm() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-xl mt-10">
+    <div className="max-w-4xl mx-auto p-6 bg-gradient-to-br from-white to-gray-400  shadow-lg rounded-xl mt-10">
       <h1 className="text-2xl font-semibold mb-6 text-center">Add Employee</h1>
 
       {serverMessage && (
@@ -148,7 +149,7 @@ export default function AddEmployeeForm() {
           name="gender"
           value={form.gender}
           onChange={handleChange}
-          className="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gradient-to-br from-white to-gray-400 "
         >
           <option value="">Select Gender</option>
           <option value="Male">Male</option>
@@ -195,7 +196,7 @@ export default function AddEmployeeForm() {
           name="maritalStatus"
           value={form.maritalStatus}
           onChange={handleChange}
-          className="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gradient-to-br from-white to-gray-400 "
         >
           <option value="">Marital Status</option>
           <option value="Single">Single</option>
@@ -207,7 +208,7 @@ export default function AddEmployeeForm() {
           name="department"
           value={form.department}
           onChange={handleChange}
-          className="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="w-full rounded-xl border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gradient-to-br from-white to-gray-400 "
         >
           <option value="">Select Department</option>
           {dep.map((d) => (

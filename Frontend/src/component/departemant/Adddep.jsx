@@ -50,8 +50,8 @@ function Adddep() {
   };
 
   return (
-    <div className="flex items-center justify-center">
-      <div className="w-96 max-w-3xl mx-auto bg-white rounded-md shadow-md p-8 mt-10">
+    <div className="flex items-center justify-center ">
+      <div className="w-96 max-w-3xl mx-auto bg-gradient-to-br from-white to-gray-400  rounded-md shadow-md p-8 mt-10">
         <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           Add Department
         </h3>

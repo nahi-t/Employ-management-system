@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
-import { Empbutton, columns } from "../../utile/EH.jsx";
+import { Atendancebutton, columns } from "../../utile/Ah.jsx";
 import axios from "axios";
 
-export default function List() {
+export default function Attendance() {
   const [emp, setEmp] = useState([]);
   const [filteredEmp, setFilteredEmp] = useState([]);
 
@@ -13,46 +13,45 @@ export default function List() {
     "http://localhost:5000";
 
   useEffect(() => {
-    const fetchemploy = async () => {
+    const fetchAttendance = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await axios.get(`${baseURL}/api/emp/getemploye`, {
+        const res = await axios.get(`${baseURL}/api/attendance/geta`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(res.data);
-        if (res.data.success) {
-          const data = res.data.employees.map((item, index) => ({
+
+        console.log("✅ Response:", res.data);
+
+        if (res.data.success && Array.isArray(res.data.records)) {
+          const data = res.data.records.map((item, index) => ({
             sno: index + 1,
-            _id: item._id,
-            dep: item.department?.name || "N/A",
-            name: item.userId?.name || "Unknown",
-            dob: item.dateOfBirth
-              ? new Date(item.dateOfBirth).toLocaleDateString()
-              : "N/A",
-            profile: (
-              <img
-                className="w-16 h-16 rounded-full object-cover"
-                src={
-                  item.image
-                    ? `${baseURL}/uploades/${item.image}`
-                    : "https://via.placeholder.com/150"
-                }
-                alt={item.userId?.name || "Employee"}
-              />
+            id: item._id,
+            empid: item.employeeId?.employeeId || "N/A",
+            name: item.employeeId?.userId?.name || "Unknown",
+            email: item.employeeId?.userId?.email || "N/A",
+            dep: item.employeeId?.department?.name || "N/A",
+            gender: item.employeeId?.gender || "N/A",
+            designation: item.employeeId?.designation || "N/A",
+            status: item.status,
+            action: (
+              <Atendancebutton status={item.status} data={item} id={item._id} />
             ),
-            action: <Empbutton id={item._id} data={item} />,
           }));
 
           setEmp(data);
           setFilteredEmp(data);
+        } else {
+          console.error("❌ Unexpected response format:", res.data);
         }
       } catch (error) {
-        console.error(error);
-        alert(error.response?.data?.message || "Error fetching employees");
+        console.error("❌ Error fetching attendance:", error);
+        alert(
+          error.response?.data?.message || "Error fetching attendance data"
+        );
       }
     };
 
-    fetchemploy();
+    fetchAttendance();
   }, [baseURL]);
 
   const filteremp = (e) => {
@@ -67,7 +66,7 @@ export default function List() {
     <div className="p-5">
       {/* Header */}
       <div className="text-center mb-4">
-        <h3 className="text-2xl font-bold">Manage Employees</h3>
+        <h3 className="text-2xl font-bold">Attendance Management</h3>
       </div>
 
       {/* Search and Add Button */}
@@ -78,11 +77,18 @@ export default function List() {
           className="px-4 py-2 border border-teal-400 rounded focus:outline-none focus:ring-2 focus:ring-teal-400"
           onChange={filteremp}
         />
+        <p className="text-lg font-semibold">
+          Mark Employee Attendance for{" "}
+          <span className="font-bold underline text-gray-600">
+            {new Date().toISOString().split("T")[0]}
+          </span>
+        </p>
+
         <Link
-          to="/admin-dashboard/Adde"
+          to="/admin-dashboard/attendance-history"
           className="px-4 py-2 bg-teal-600 rounded text-white hover:bg-teal-700 transition"
         >
-          Add New Employee
+          View Attendance Report
         </Link>
       </div>
 

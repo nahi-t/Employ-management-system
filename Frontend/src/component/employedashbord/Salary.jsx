@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { useAuth } from "../../context/AuthContext";
 
 export default function Viewsalary() {
   const { id } = useParams();
   const [salaries, setSalaries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const { user } = useAuth();
 
   const baseURL =
     import.meta?.env?.VITE_API_BASE_URL?.replace(/\/$/, "") ||
@@ -21,7 +19,7 @@ export default function Viewsalary() {
         const res = await axios.get(`${baseURL}/api/salary/get/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(res);
+
         if (res.data.success && Array.isArray(res.data.data)) {
           setSalaries(res.data.data);
         } else {
@@ -42,10 +40,10 @@ export default function Viewsalary() {
   if (error) return <p className="text-center mt-8 text-red-600">{error}</p>;
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 bg-gradient-to-br from-white to-gray-400   shadow-lg rounded-2xl p-6 overflow-x-auto">
+    <div className="max-w-4xl mx-auto mt-10 bg-white shadow-lg rounded-2xl p-6 overflow-x-auto">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
         Salary Records for Employee&nbsp;
-        {user.name}
+        {salaries[0]?.employeeId?.employeeId || id}
       </h2>
 
       <table className="min-w-full text-sm divide-y divide-gray-200">
