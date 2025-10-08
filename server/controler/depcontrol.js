@@ -10,6 +10,12 @@ const adddep = async (req, res) => {
         .status(400)
         .json({ msg: "Name and description are required", success: false });
     }
+    const depExists = await Department.findOne({ name });
+    if (depExists) {
+      return res
+        .status(400)
+        .json({ msg: "Department already exists", success: false });
+    }
 
     // Create new department
     const newDepartment = await Department.create({ name, description });
@@ -71,6 +77,12 @@ const updatdep = async (req, res) => {
   const { name, description } = req.body;
 
   try {
+    const exitdep = await Department.findOne({ name });
+    if (exitdep) {
+      return res
+        .status(400)
+        .json({ msg: "Department name already exists", success: false });
+    }
     const department = await Department.findById(id);
 
     if (!department) {
@@ -101,13 +113,15 @@ const updatdep = async (req, res) => {
 const delet = async (req, res) => {
   const { id } = req.params;
   try {
-    const department = await Department.findByIdAndDelete(id);
+    const department = await Department.findById(id);
+    await department.deleteOne();
     if (!department) {
       return res.status(404).json({
         msg: "Department not found",
         success: false,
       });
     }
+    await department.deleteOne();
     return res.status(200).json({
       msg: "Department deleted successfully",
       success: true,

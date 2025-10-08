@@ -142,15 +142,15 @@ const getemployeById = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid employee ID" });
     }
-
-    const employee = await Employee.findById(id)
+    let employee;
+    employee = await Employee.findById(id)
       .populate("userId")
       .populate("department");
 
     if (!employee) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Employee not found" });
+      employee = await Employee.findOne({ userId: id })
+        .populate("userId", { password: 0 })
+        .populate("department");
     }
 
     res.status(200).json({ success: true, employee });

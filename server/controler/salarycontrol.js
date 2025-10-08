@@ -51,10 +51,14 @@ const addsalary = async (req, res) => {
 
 const getsalary = async (req, res) => {
   try {
-    const salaries = await Salary.find({ employeeId: req.params.id }).populate(
-      "employeeId",
-      "employeeId"
-    );
+    const { id } = req.params;
+    let salaries;
+    salaries = await Salary.find({ employeeId: id });
+    if (!salaries || salaries.length < 1) {
+      const employe = await Employee.findOne({ userId: id });
+      salaries = await Salary.find({ employeeId: employe._id });
+      return res.status(200).json({ success: true, data: salaries, employe });
+    }
     return res.status(200).json({ success: true, data: salaries });
   } catch (error) {
     return res.status(500).json({
