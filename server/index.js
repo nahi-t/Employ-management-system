@@ -10,6 +10,7 @@ import salary from "./Rout/salaryrout.js";
 import leavesrout from "./Rout/leavesrout.js";
 import setting from "./Rout/setting.js";
 import atndance from "./Rout/atendancerout.js";
+import dashbord from "./Rout/dashbord.js";
 import path from "path";
 
 dotenv.config();
@@ -28,6 +29,7 @@ app.use("/api/salary", salary);
 app.use("/api/leaves", leavesrout);
 app.use("/api/setting", setting);
 app.use("/api/attendance", atndance);
+app.use("/api/dashbord", dashbord);
 
 const PORT = process.env.PORT || 3000; // fallback port
 
