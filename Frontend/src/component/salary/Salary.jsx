@@ -4,8 +4,8 @@ import axios from "axios";
 export default function Salary() {
   const [departments, setDepartments] = useState([]);
   const [employees, setEmployees] = useState([]);
-
   const [loading, setLoading] = useState(true);
+
   const [formData, setFormData] = useState({
     department: "",
     employeeId: "",
@@ -30,8 +30,8 @@ export default function Salary() {
 
         if (res.data.success && Array.isArray(res.data.employees)) {
           const employees = res.data.employees;
-          setEmployees(employees); // store all employees
-          console.log(employees);
+          setEmployees(employees);
+
           // Extract unique departments
           const deptMap = {};
           employees.forEach((emp) => {
@@ -43,7 +43,7 @@ export default function Salary() {
           setDepartments(Object.values(deptMap));
         }
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch employees:", err);
       } finally {
         setLoading(false);
       }
@@ -52,44 +52,55 @@ export default function Salary() {
     fetchEmployees();
   }, [baseURL]);
 
-  // Handle dropdown changes
+  // Handle form input change
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-      ...(name === "department" && { employee: "" }), // reset employee when department changes
+      ...(name === "department" && { employeeId: "" }), // ✅ fixed key name
     }));
   };
 
-  // Filter employees based on selected department
+  // Filter employees by selected department
   const filteredEmployees = employees.filter(
-    (emp) => emp.department._id === formData.department
+    (emp) => emp.department?._id === formData.department
   );
 
-  // Submit
+  // Submit salary form
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Salary Data:", formData);
+
+    if (!formData.department || !formData.employeeId) {
+      return alert("Please select both department and employee.");
+    }
+
+    console.log("Submitting salary data:", formData);
 
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(
-        `http://localhost:5000/api/salary/adds`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      if (res.data.success == true) {
+      const res = await axios.post(`${baseURL}/api/salary/adds`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (res.data.success) {
         alert("Salary record submitted!");
+        setFormData({
+          department: "",
+          employeeId: "",
+          basicSalary: "",
+          allowance: "",
+          deduction: "",
+          payDate: "",
+        });
       } else {
-        console.log(res.data.mesg);
+        console.log("Server response:", res.data.mesg);
+        alert("Failed to submit salary.");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error submitting salary:", err);
       alert("Failed to submit salary.");
     }
   };
@@ -113,6 +124,7 @@ export default function Salary() {
             value={formData.department}
             onChange={handleChange}
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+            required
           >
             <option value="">Select Department</option>
             {departments.map((dept) => (
@@ -123,7 +135,7 @@ export default function Salary() {
           </select>
         </div>
 
-        {/* Employee (filtered by department) */}
+        {/* Employee */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
             Employee
@@ -133,11 +145,12 @@ export default function Salary() {
             value={formData.employeeId}
             onChange={handleChange}
             className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black"
+            required
           >
             <option value="">Select Employee</option>
             {filteredEmployees.map((emp) => (
               <option key={emp._id} value={emp._id}>
-                {emp.userId.name} {/* Display employee name */}
+                {emp.userId?.name || "Unknown"}
               </option>
             ))}
           </select>
